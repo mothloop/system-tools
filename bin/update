@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+sudo -v
+printf "\r\033[K"
+
 printf "[APT] Updating..."
 sudo apt update > /dev/null 2>&1
 sudo apt upgrade -y > /dev/null 2>&1
