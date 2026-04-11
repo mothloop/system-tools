@@ -7,10 +7,10 @@ sudo apt autoclean -y > /dev/null 2>&1 || true
 sudo apt clean > /dev/null 2>&1
 sudo rm -rf /var/lib/apt/lists/* > /dev/null 2>&1
 sudo apt update > /dev/null 2>&1
-printf "\r[APT] Done       \n"
+printf "\r%-20s\n" "[APT] Done"
 
 printf "[SNAP] Cleaning..."
 snap list --all 2>/dev/null | awk '/disabled/{print $1, $3}' | while read -r snapname revision; do
     sudo snap remove "$snapname" --revision="$revision" > /dev/null 2>&1
 done
-printf "\r[SNAP] Done      \n"
+printf "\r%-20s\n" "[SNAP] Done"

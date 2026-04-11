@@ -5,8 +5,8 @@ printf "[APT] Updating..."
 sudo apt update > /dev/null 2>&1
 sudo apt upgrade -y > /dev/null 2>&1
 sudo apt full-upgrade -y > /dev/null 2>&1
-printf "\r[APT] Done       \n"
+printf "\r%-20s\n" "[APT] Done"
 
 printf "[SNAP] Updating..."
 sudo snap refresh > /dev/null 2>&1
-printf "\r[SNAP] Done      \n"
+printf "\r%-20s\n" "[SNAP] Done"
