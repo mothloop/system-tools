@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-sudo -v
-printf "\r\033[K"
+if ! sudo -n true 2>/dev/null; then
+    sudo true
+fi
 
 printf "[APT] Updating..."
 sudo apt update > /dev/null 2>&1
