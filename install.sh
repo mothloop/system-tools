@@ -21,9 +21,7 @@ case ":$PATH:" in
         fi
         LINE='export PATH="$HOME/.local/bin:$PATH"'
         if [ -f "$RC_FILE" ]; then
-            if ! grep -Fxq "$LINE" "$RC_FILE"; then
-                printf '\n%s\n' "$LINE" >> "$RC_FILE"
-            fi
+            grep -Fq '.local/bin' "$RC_FILE" || printf '\n%s\n' "$LINE" >> "$RC_FILE"
         else
             printf '%s\n' "$LINE" > "$RC_FILE"
         fi
