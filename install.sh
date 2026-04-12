@@ -7,7 +7,11 @@ TARGET_DIR="$HOME/.local/bin"
 mkdir -p "$TARGET_DIR"
 
 for script in update clean up; do
-    install -m 755 "$REPO_DIR/bin/$script" "$TARGET_DIR/$script"
+    target="$TARGET_DIR/$script"
+    if [ -L "$target" ] || { [ -e "$target" ] && [ "$(readlink -f "$target")" = "$(readlink -f "$REPO_DIR/bin/$script")" ]; }; then
+        rm -f "$target"
+    fi
+    install -m 755 "$REPO_DIR/bin/$script" "$target"
 done
 
 case ":$PATH:" in
