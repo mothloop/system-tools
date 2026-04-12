@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! sudo -n true 2>/dev/null; then
+    sudo true
+fi
+
+printf "[APT] Checking..."
+sudo apt update > /dev/null 2>&1
+apt_count=$(
+    apt list --upgradable 2>/dev/null \
+    | tail -n +2 \
+    | grep -c . || true
+)
+
+if [ "$apt_count" -eq 1 ]; then
+    printf "\r[APT] 1 package upgradable\n"
+else
+    printf "\r[APT] %d packages upgradable\n" "$apt_count"
+fi
+
+printf "[SNAP] Checking..."
+snap_count=$(
+    snap refresh --list 2>/dev/null \
+    | tail -n +2 \
+    | grep -c . || true
+)
+
+if [ "$snap_count" -eq 1 ]; then
+    printf "\r[SNAP] 1 package upgradable\n"
+else
+    printf "\r[SNAP] %d packages upgradable\n" "$snap_count"
+fi
