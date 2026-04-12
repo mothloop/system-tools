@@ -6,9 +6,9 @@ TARGET_DIR="$HOME/.local/bin"
 
 mkdir -p "$TARGET_DIR"
 
-ln -sf "$REPO_DIR/bin/update" "$TARGET_DIR/update"
-ln -sf "$REPO_DIR/bin/clean" "$TARGET_DIR/clean"
-ln -sf "$REPO_DIR/bin/up" "$TARGET_DIR/up"
+for script in update clean up; do
+    install -m 755 "$REPO_DIR/bin/$script" "$TARGET_DIR/$script"
+done
 
 case ":$PATH:" in
     *":$TARGET_DIR:"*)
