@@ -8,6 +8,7 @@ mkdir -p "$TARGET_DIR"
 
 ln -sf "$REPO_DIR/bin/update" "$TARGET_DIR/update"
 ln -sf "$REPO_DIR/bin/clean" "$TARGET_DIR/clean"
+ln -sf "$REPO_DIR/bin/up" "$TARGET_DIR/up"
 
 case ":$PATH:" in
     *":$TARGET_DIR:"*)
@@ -28,5 +29,5 @@ case ":$PATH:" in
         ;;
 esac
 
-echo "Installed update and clean to $TARGET_DIR"
+echo "Installed update, clean, and up to $TARGET_DIR"
 echo "Restart your shell or run: source ~/.bashrc"
