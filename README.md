@@ -6,12 +6,13 @@ This repository provides small, focused command-line tools for maintaining a cle
 
 ## Overview
 
-The repository defines two primary commands:
+The repository defines three primary commands:
 
 - `update` - performs a full system update
 - `clean` - removes unnecessary files and packages
+- `up` - checks for available system updates
 
-Both commands suppress all underlying command output and present only controlled status messages. This keeps terminal output minimal and readable while still performing complete maintenance operations.
+All commands suppress all underlying command output and present only controlled status messages. This keeps terminal output minimal and readable while still performing complete maintenance operations.
 
 ## Design Principles
 
@@ -43,6 +44,15 @@ Includes:
 - Removing outdated package lists
 - Removing disabled Snap revisions
 
+### `up`
+
+Performs a check for available updates using both APT and Snap.
+
+Includes:
+- Checking package lists for updates
+- Counting upgradable APT packages
+- Counting refreshable Snap packages
+
 ## Installation
 
 Clone the repository and run the installer:
@@ -50,7 +60,7 @@ Clone the repository and run the installer:
 ```bash
 git clone https://github.com/mothloop/system-tools.git
 cd system-tools
-chmod +x install.sh bin/update bin/clean
+chmod +x install.sh bin/update bin/clean bin/up
 ./install.sh
 ````
 
@@ -80,7 +90,8 @@ or restart your terminal.
 system-tools/
 ├── bin/
 │   ├── update
-│   └── clean
+│   ├── clean
+│   └── up
 ├── install.sh
 └── README.md
 ```
@@ -92,6 +103,7 @@ Once installed, the commands can be run from anywhere:
 ```bash
 update
 clean
+up
 ```
 
 ## Safety Notes
