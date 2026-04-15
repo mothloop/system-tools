@@ -14,3 +14,18 @@ printf "\r%-20s\n" "[APT] Done"
 printf "[SNAP] Updating..."
 sudo snap refresh > /dev/null 2>&1
 printf "\r%-20s\n" "[SNAP] Done"
+
+printf "[FW] Checking..."
+if command -v fwupdmgr >/dev/null 2>&1; then
+    if fwupdmgr get-updates 2>/dev/null | grep -q "firmware updates available"; then
+        printf "\r[FW] Updates available, updating...\n"
+        sudo fwupdmgr update
+        if fwupdmgr get-reboot-info 2>/dev/null | grep -q "yes"; then
+            printf "[FW] Reboot required after firmware update\n"
+        fi
+    else
+        printf "\r%-20s\n" "[FW] No updates"
+    fi
+else
+    printf "\r%-20s\n" "[FW] Unavailable"
+fi

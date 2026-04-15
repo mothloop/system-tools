@@ -59,6 +59,19 @@ printf "  APT packages: %d\n" "$apt_count"
 printf "  Snap packages: %d\n" "$snap_count"
 printf "\n"
 
+printf "[FIRMWARE]\n"
+if command -v fwupdmgr >/dev/null 2>&1; then
+    if fwupdmgr get-updates 2>/dev/null | grep -q "firmware updates available"; then
+        fw_count=$(fwupdmgr get-updates 2>/dev/null | grep -c "^•" || true)
+        printf "  Updates available: %d\n" "$fw_count"
+    else
+        printf "  Status: Up to date\n"
+    fi
+else
+    printf "  Status: Tool unavailable\n"
+fi
+printf "\n"
+
 printf "[SYSTEM HEALTH]\n"
 uptime_output=$(uptime -p 2>/dev/null || uptime | sed 's/.*up //' | sed 's/,.*$//')
 printf "  Uptime: %s\n" "$uptime_output"
