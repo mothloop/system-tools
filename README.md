@@ -22,18 +22,21 @@ All commands suppress all underlying command output and present only controlled 
 - No external dependencies beyond standard Ubuntu tools
 - Easy installation and portability
 - Suitable for personal system tooling and dotfile ecosystems
+- Firmware updates are intentionally interactive and may require reboot
 
 ## Commands
 
 ### `update`
 
-Performs a full system update using both APT and Snap.
+Performs a full system update using APT, Snap, and firmware (if available).
 
 Includes:
 - Updating package lists
 - Upgrading installed packages
 - Handling dependency changes
 - Refreshing Snap packages
+- Checking and applying firmware updates (interactive confirmation required)
+- Notifying if reboot is needed after firmware updates
 
 ### `clean`
 
@@ -47,12 +50,13 @@ Includes:
 
 ### `up`
 
-Performs a check for available updates using both APT and Snap.
+Performs a check for available updates using APT, Snap, and firmware (if available).
 
 Includes:
 - Checking package lists for updates
 - Counting upgradable APT packages
 - Counting refreshable Snap packages
+- Checking for available firmware updates
 
 ### `audit`
 
@@ -63,6 +67,7 @@ Includes:
 - Identification of large files (500MB+)
 - Cache and temporary directory sizes
 - Package inventory (APT and Snap)
+- Firmware status (if tool available)
 - System health metrics (uptime, memory usage, pending updates)
 - Cleanliness score (0-100) with health status
 
@@ -90,6 +95,7 @@ chmod +x bin/audit
 * `snap`
 * `bash`
 * `sudo` privileges
+* `fwupdmgr` (optional, for firmware updates)
 
 ## Path Configuration
 

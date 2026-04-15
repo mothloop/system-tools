@@ -31,3 +31,19 @@ if [ "$snap_count" -eq 1 ]; then
 else
     printf "\r[SNAP] %d packages upgradable\n" "$snap_count"
 fi
+
+printf "[FW] Checking..."
+if command -v fwupdmgr >/dev/null 2>&1; then
+    if fwupdmgr get-updates 2>/dev/null | grep -q "firmware updates available"; then
+        fw_count=$(fwupdmgr get-updates 2>/dev/null | grep -c "^•" || true)
+        if [ "$fw_count" -eq 1 ]; then
+            printf "\r[FW] 1 firmware update available\n"
+        else
+            printf "\r[FW] %d firmware updates available\n" "$fw_count"
+        fi
+    else
+        printf "\r[FW] No updates\n"
+    fi
+else
+    printf "\r[FW] Unavailable\n"
+fi
