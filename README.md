@@ -6,11 +6,12 @@ This repository provides small, focused command-line tools for maintaining a cle
 
 ## Overview
 
-The repository defines three primary commands:
+The repository defines four primary commands:
 
 - `update` - performs a full system update
 - `clean` - removes unnecessary files and packages
 - `up` - checks for available system updates
+- `audit` - analyzes system storage and reports cleanliness score
 
 All commands suppress all underlying command output and present only controlled status messages. This keeps terminal output minimal and readable while still performing complete maintenance operations.
 
@@ -53,6 +54,18 @@ Includes:
 - Counting upgradable APT packages
 - Counting refreshable Snap packages
 
+### `audit`
+
+Analyzes system storage and generates a comprehensive cleanliness report.
+
+Includes:
+- Disk usage across partitions
+- Identification of large files (500MB+)
+- Cache and temporary directory sizes
+- Package inventory (APT and Snap)
+- System health metrics (uptime, memory usage, pending updates)
+- Cleanliness score (0-100) with health status
+
 ## Installation
 
 Clone the repository and run the installer:
@@ -65,6 +78,10 @@ chmod +x install.sh bin/update bin/clean bin/up
 ````
 
 The installer creates symlinks in `~/.local/bin`, making the commands available globally for the current user.
+
+```bash
+chmod +x bin/audit
+```
 
 ## Requirements
 
@@ -91,7 +108,8 @@ system-tools/
 ├── bin/
 │   ├── update
 │   ├── clean
-│   └── up
+│   ├── up
+│   └── audit
 ├── install.sh
 └── README.md
 ```
