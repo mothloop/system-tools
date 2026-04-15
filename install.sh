@@ -6,7 +6,7 @@ TARGET_DIR="$HOME/.local/bin"
 
 mkdir -p "$TARGET_DIR"
 
-for script in update clean up; do
+for script in update clean audit up; do
     target="$TARGET_DIR/$script"
     if [ -L "$target" ] || { [ -e "$target" ] && [ "$(readlink -f "$target")" = "$(readlink -f "$REPO_DIR/bin/$script")" ]; }; then
         rm -f "$target"
@@ -33,5 +33,5 @@ case ":$PATH:" in
         ;;
 esac
 
-echo "Installed update, clean, and up to $TARGET_DIR"
+echo "Installed update, clean, audit, and up to $TARGET_DIR"
 echo "Restart your shell or run: source ~/.bashrc"
