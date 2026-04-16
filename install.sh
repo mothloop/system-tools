@@ -6,12 +6,15 @@ TARGET_DIR="$HOME/.local/bin"
 
 mkdir -p "$TARGET_DIR"
 
-for script in update clean audit up full; do
+# Store repo directory for update script
+echo "$REPO_DIR" > "$HOME/.system-tools-repo"
+
+for script in update clean audit up full install; do
     target="$TARGET_DIR/$script"
     if [ -L "$target" ] || { [ -e "$target" ] && [ "$(readlink -f "$target")" = "$(readlink -f "$REPO_DIR/bin/$script")" ]; }; then
         rm -f "$target"
     fi
-    install -m 755 "$REPO_DIR/bin/$script" "$target"
+    /usr/bin/install -m 755 "$REPO_DIR/bin/$script" "$target"
 done
 
 case ":$PATH:" in
@@ -30,8 +33,9 @@ case ":$PATH:" in
         else
             printf '%s\n' "$LINE" > "$RC_FILE"
         fi
+        source "$RC_FILE"
         ;;
 esac
 
-echo "Installed update, clean, audit, up, and full to $TARGET_DIR"
+echo "Installed update, clean, audit, up, full, and install to $TARGET_DIR"
 echo "Restart your shell or run: source ~/.bashrc"
