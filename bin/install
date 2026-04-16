@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG_FILE="$HOME/.system-tools-repo"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Configuration file $CONFIG_FILE not found. Please run install.sh first."
+    exit 1
+fi
+
+REPO_DIR=$(cat "$CONFIG_FILE" | tr -d '\n')
+
+if [ ! -d "$REPO_DIR" ]; then
+    echo "Error: Repository directory $REPO_DIR does not exist."
+    exit 1
+fi
+
+cd "$REPO_DIR"
+
+echo "Updating system-tools repository..."
+git pull origin main
+
+echo "Reinstalling tools..."
+TARGET_DIR="$HOME/.local/bin"
+
+mkdir -p "$TARGET_DIR"
+
+for script in update clean audit up full; do
+    target="$TARGET_DIR/$script"
+    if [ -L "$target" ] || { [ -e "$target" ] && [ "$(readlink -f "$target")" = "$(readlink -f "$REPO_DIR/bin/$script")" ]; }; then
+        rm -f "$target"
+    fi
+    /usr/bin/install -m 755 "$REPO_DIR/bin/$script" "$target"
+done
+
+echo "System-tools updated successfully."
+
+echo "System-tools updated successfully."
