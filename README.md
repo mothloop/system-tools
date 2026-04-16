@@ -16,6 +16,8 @@ The repository defines five primary commands:
 
 All commands suppress all underlying command output and present only controlled status messages. This keeps terminal output minimal and readable while still performing complete maintenance operations.
 
+This repository is developed on Ubuntu 24.04 and will work best on that version of Ubuntu.
+
 ## Design Principles
 
 - Minimal output
@@ -124,7 +126,8 @@ system-tools/
 │   ├── update
 │   ├── clean
 │   ├── up
-│   └── audit
+│   ├── audit
+│   └── full
 ├── install.sh
 └── README.md
 ```
@@ -137,6 +140,8 @@ Once installed, the commands can be run from anywhere:
 update
 clean
 up
+audit
+full
 ```
 
 ## Safety Notes
