@@ -6,12 +6,13 @@ This repository provides small, focused command-line tools for maintaining a cle
 
 ## Overview
 
-The repository defines four primary commands:
+The repository defines five primary commands:
 
 - `update` - performs a full system update
 - `clean` - removes unnecessary files and packages
 - `up` - checks for available system updates
 - `audit` - analyzes system storage and reports cleanliness score
+- `full` - performs a full system update followed by cleanup
 
 All commands suppress all underlying command output and present only controlled status messages. This keeps terminal output minimal and readable while still performing complete maintenance operations.
 
@@ -71,6 +72,14 @@ Includes:
 - System health metrics (uptime, memory usage, pending updates)
 - Cleanliness score (0-100) with health status
 
+### `full`
+
+Performs a full system update followed by cleanup.
+
+Includes:
+- Running the `update` command to update all packages and firmware
+- Running the `clean` command to remove unnecessary files and packages
+
 ## Installation
 
 Clone the repository and run the installer:
@@ -78,7 +87,7 @@ Clone the repository and run the installer:
 ```bash
 git clone https://github.com/mothloop/system-tools.git
 cd system-tools
-chmod +x install.sh bin/update bin/clean bin/up
+chmod +x install.sh bin/update bin/clean bin/up bin/full
 ./install.sh
 ````
 
