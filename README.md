@@ -6,13 +6,14 @@ This repository provides small, focused command-line tools for maintaining a cle
 
 ## Overview
 
-The repository defines five primary commands:
+The repository defines six primary commands:
 
 - `update` - performs a full system update
 - `clean` - removes unnecessary files and packages
 - `up` - checks for available system updates
 - `audit` - analyzes system storage and reports cleanliness score
 - `full` - performs a full system update followed by cleanup
+- `install` - updates the system-tools repository and reinstalls all commands
 
 All commands suppress all underlying command output and present only controlled status messages. This keeps terminal output minimal and readable while still performing complete maintenance operations.
 
@@ -82,6 +83,14 @@ Includes:
 - Running the `update` command to update all packages and firmware
 - Running the `clean` command to remove unnecessary files and packages
 
+### `install`
+
+Updates the system-tools repository and reinstalls all commands.
+
+Includes:
+- Pulling the latest changes from the repository
+- Reinstalling all commands to ensure they are up to date
+
 ## Installation
 
 Clone the repository and run the installer:
@@ -89,15 +98,21 @@ Clone the repository and run the installer:
 ```bash
 git clone https://github.com/mothloop/system-tools.git
 cd system-tools
-chmod +x install.sh bin/update bin/clean bin/up bin/full
+chmod +x install.sh bin/*
 ./install.sh
-````
+```
 
-The installer creates symlinks in `~/.local/bin`, making the commands available globally for the current user.
+The installer creates executables in `~/.local/bin`, making the commands available globally for the current user. It also adds `~/.local/bin` to your `PATH` if not already present.
+
+## Updates
+
+To update the system-tools and ensure all commands are current, run:
 
 ```bash
-chmod +x bin/audit
+install
 ```
+
+This command can be run from anywhere and will automatically pull the latest changes and reinstall all tools.
 
 ## Requirements
 
@@ -127,7 +142,8 @@ system-tools/
 │   ├── clean
 │   ├── up
 │   ├── audit
-│   └── full
+│   ├── full
+│   └── install
 ├── install.sh
 └── README.md
 ```
@@ -142,6 +158,7 @@ clean
 up
 audit
 full
+install
 ```
 
 ## Safety Notes
