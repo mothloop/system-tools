@@ -174,6 +174,7 @@ up
 audit
 full
 install
+monitor
 ```
 
 ## Safety Notes
