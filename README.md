@@ -6,7 +6,7 @@ This repository provides small, focused command-line tools for maintaining a cle
 
 ## Overview
 
-The repository defines six primary commands:
+The repository defines seven primary commands:
 
 - `update` - performs a full system update
 - `clean` - removes unnecessary files and packages
@@ -14,6 +14,7 @@ The repository defines six primary commands:
 - `audit` - analyzes system storage and reports cleanliness score
 - `full` - performs a full system update followed by cleanup
 - `install` - updates the system-tools repository and reinstalls all commands
+- `monitor` - provides real-time system monitoring
 
 All commands suppress all underlying command output and present only controlled status messages. This keeps terminal output minimal and readable while still performing complete maintenance operations.
 
@@ -91,6 +92,19 @@ Includes:
 - Pulling the latest changes from the repository
 - Reinstalling all commands to ensure they are up to date
 
+### `monitor`
+
+Provides real-time system monitoring with live updates.
+
+Includes:
+- CPU usage percentage
+- Memory usage (used/total and percentage)
+- Network I/O rates (receive/transmit)
+- Disk I/O rates (read/write)
+- Updates every 2 seconds
+- Clean display that refreshes in place
+- Graceful exit on Ctrl+C
+
 ## Installation
 
 Clone the repository and run the installer:
@@ -143,7 +157,8 @@ system-tools/
 │   ├── up
 │   ├── audit
 │   ├── full
-│   └── install
+│   ├── install
+│   └── monitor
 ├── install.sh
 └── README.md
 ```
