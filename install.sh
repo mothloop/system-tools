@@ -9,7 +9,7 @@ mkdir -p "$TARGET_DIR"
 # Store repo directory for update script
 echo "$REPO_DIR" > "$HOME/.system-tools-repo"
 
-for script in update clean audit up full install monitor; do
+for script in update clean audit up full install monitor syshelp; do
     target="$TARGET_DIR/$script"
     if [ -L "$target" ] || { [ -e "$target" ] && [ "$(readlink -f "$target")" = "$(readlink -f "$REPO_DIR/bin/$script")" ]; }; then
         rm -f "$target"
@@ -37,5 +37,5 @@ case ":$PATH:" in
         ;;
 esac
 
-echo "Installed update, clean, audit, up, full, install, and monitor to $TARGET_DIR"
+echo "Installed update, clean, audit, up, full, install, monitor, and syshelp to $TARGET_DIR"
 echo "Restart your shell or run: source ~/.bashrc"
