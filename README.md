@@ -13,6 +13,7 @@ Provides small, focused CLI tools for system maintenance. Scripts are silent, pr
 - `full`: Update followed by cleanup
 - `install`: Update repository and reinstall commands
 - `monitor`: Real-time system monitoring
+- `syshelp`: Display help for system-tools commands
 
 All commands suppress output, showing only status messages. Developed on Ubuntu 24.04.
 
@@ -61,7 +62,8 @@ system-tools/
 │   ├── audit
 │   ├── full
 │   ├── install
-│   └── monitor
+│   ├── monitor
+│   └── syshelp
 ├── install.sh
 └── README.md
 ```
@@ -71,13 +73,15 @@ system-tools/
 Run commands from anywhere:
 
 ```bash
-update  # Update system
-clean   # Clean system
-up      # Check updates
-audit   # Analyze storage
-full    # Update + clean
-install # Update tools
-monitor # Monitor system
+update             # Update system
+clean              # Clean system
+up                 # Check updates
+audit              # Analyze storage
+full               # Update + clean
+install            # Update tools
+monitor            # Monitor system
+syshelp list       # List all commands
+syshelp <command>  # Show help for a command
 ```
 
 ## Safety Notes
