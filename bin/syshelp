@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Command descriptions
+declare -A commands=(
+    [update]="Full system update (APT, Snap, firmware)"
+    [clean]="Remove unnecessary files and packages (APT, Snap)"
+    [up]="Check for available updates (APT, Snap, firmware)"
+    [audit]="Analyze storage and report cleanliness score"
+    [full]="Update followed by cleanup"
+    [install]="Update repository and reinstall commands"
+    [monitor]="Real-time system monitoring"
+    [syshelp]="Display help for system-tools commands"
+)
+
+print_help() {
+    local cmd="$1"
+    
+    if [ -z "$cmd" ] || [ ! "${commands[$cmd]+_}" ]; then
+        printf "Error: Unknown command '%s'\n" "$cmd"
+        printf "Use 'syshelp list' to see all available commands\n"
+        exit 1
+    fi
+    
+    printf "=== COMMAND HELP ===\n\n"
+    printf "Command: %s\n" "$cmd"
+    printf "Description: %s\n\n" "${commands[$cmd]}"
+    printf "Usage: %s\n" "$cmd"
+}
+
+print_list() {
+    printf "=== AVAILABLE COMMANDS ===\n\n"
+    
+    for cmd in "${!commands[@]}"; do
+        printf "  %-12s  %s\n" "$cmd" "${commands[$cmd]}"
+    done | sort
+    
+    printf "\n"
+    printf "For more details: syshelp <command_name>\n"
+}
+
+main() {
+    if [ $# -eq 0 ]; then
+        printf "Usage: syshelp <command> | syshelp list\n"
+        exit 0
+    fi
+    
+    case "$1" in
+        list)
+            print_list
+            ;;
+        *)
+            print_help "$1"
+            ;;
+    esac
+}
+
+main "$@"
