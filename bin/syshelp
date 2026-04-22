@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Command descriptions
+# Command descriptions``
 declare -A commands=(
     [update]="Full system update (APT, Snap, firmware)"
     [clean]="Remove unnecessary files and packages (APT, Snap)"
