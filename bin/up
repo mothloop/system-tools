@@ -1,49 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! sudo -n true 2>/dev/null; then
-    sudo true
+REPO_DIR="$(cat "$HOME/.system-tools-repo" 2>/dev/null || echo '')"
+if [ -z "$REPO_DIR" ] || [ ! -d "$REPO_DIR" ]; then
+    printf "Error: system-tools repository not found. Run 'install' first.\n" >&2
+    exit 1
 fi
+# shellcheck source=/dev/null
+source "$REPO_DIR/lib/common.sh"
+# shellcheck source=/dev/null
+source "$REPO_DIR/lib/config.sh"
+
+ensure_sudo
 
 printf "[APT] Checking..."
 sudo apt update > /dev/null 2>&1
-apt_count=$(
-    apt list --upgradable 2>/dev/null \
-    | tail -n +2 \
-    | grep -c . || true
-)
-
-if [ "$apt_count" -eq 1 ]; then
-    printf "\r[APT] 1 package upgradable\n"
-else
-    printf "\r[APT] %d packages upgradable\n" "$apt_count"
-fi
+apt_count=$(get_apt_upgradable)
+printf "\r[APT] $(format_count "$apt_count" "package" "packages") upgradable\n"
 
 printf "[SNAP] Checking..."
-snap_count=$(
-    snap refresh --list 2>/dev/null \
-    | tail -n +2 \
-    | grep -c . || true
-)
+snap_count=$(get_snap_upgradable)
+printf "\r[SNAP] $(format_count "$snap_count" "package" "packages") upgradable\n"
 
-if [ "$snap_count" -eq 1 ]; then
-    printf "\r[SNAP] 1 package upgradable\n"
-else
-    printf "\r[SNAP] %d packages upgradable\n" "$snap_count"
-fi
-
-printf "[FW] Checking..."
-if command -v fwupdmgr >/dev/null 2>&1; then
-    if fwupdmgr get-updates 2>/dev/null | grep -q "firmware updates available"; then
-        fw_count=$(fwupdmgr get-updates 2>/dev/null | grep -c "^•" || true)
-        if [ "$fw_count" -eq 1 ]; then
-            printf "\r[FW] 1 firmware update available\n"
+if [ "$ENABLE_FIRMWARE_UPDATES" = true ]; then
+    printf "[FW] Checking..."
+    if command -v fwupdmgr >/dev/null 2>&1; then
+        if fwupdmgr get-updates 2>/dev/null | grep -q "firmware updates available"; then
+            fw_count=$(fwupdmgr get-updates 2>/dev/null | grep -c "^•" || echo 0)
+            printf "\r[FW] $(format_count "$fw_count" "firmware update" "firmware updates") available\n"
         else
-            printf "\r[FW] %d firmware updates available\n" "$fw_count"
+            printf "\r[FW] No updates\n"
         fi
     else
-        printf "\r[FW] No updates\n"
+        printf "\r[FW] Unavailable\n"
     fi
-else
-    printf "\r[FW] Unavailable\n"
 fi

@@ -9,7 +9,11 @@ mkdir -p "$TARGET_DIR"
 # Store repo directory for update script
 echo "$REPO_DIR" > "$HOME/.system-tools-repo"
 
-for script in update clean audit up full install monitor syshelp; do
+# List of scripts to install
+SCRIPTS=(update clean audit up full install monitor syshelp)
+
+# Install each script
+for script in "${SCRIPTS[@]}"; do
     target="$TARGET_DIR/$script"
     if [ -L "$target" ] || { [ -e "$target" ] && [ "$(readlink -f "$target")" = "$(readlink -f "$REPO_DIR/bin/$script")" ]; }; then
         rm -f "$target"
@@ -17,11 +21,12 @@ for script in update clean audit up full install monitor syshelp; do
     /usr/bin/install -m 755 "$REPO_DIR/bin/$script" "$target"
 done
 
+# Update PATH if needed
 case ":$PATH:" in
     *":$TARGET_DIR:"*)
         ;;
     *)
-        SHELL_NAME="$(basename "${SHELL:-}")"
+        SHELL_NAME="$(basename "${SHELL:-/bin/bash}")"
         if [ "$SHELL_NAME" = "zsh" ]; then
             RC_FILE="$HOME/.zshrc"
         else
@@ -37,5 +42,6 @@ case ":$PATH:" in
         ;;
 esac
 
-echo "Installed update, clean, audit, up, full, install, monitor, and syshelp to $TARGET_DIR"
-echo "Restart your shell or run: source ~/.bashrc"
+printf "✓ Installed %d system-tools to %s\n" "${#SCRIPTS[@]}" "$TARGET_DIR"
+printf "✓ Configuration saved to %s\n" "$HOME/.system-tools-repo"
+printf "\nRestart your shell or run: source ~/.bashrc\n"
