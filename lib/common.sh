@@ -148,7 +148,7 @@ get_dir_size() {
 
 # Get orphaned package count
 get_orphaned_packages() {
-    apt autoremove -s 2>/dev/null | grep "^Remov" | wc -l | tr -d ' ' || echo 0
+    apt autoremove -s 2>/dev/null | grep "^Remov" | wc -l
 }
 
 export -f format_size format_rate get_apt_count get_snap_count get_apt_upgradable
