@@ -1,23 +1,28 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-format_size() {
-    numfmt --to=iec-i --suffix=B "$1" 2>/dev/null || echo "$1B"
-}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=/dev/null
+source "$SCRIPT_DIR/lib/common.sh"
+# shellcheck source=/dev/null
+source "$SCRIPT_DIR/lib/config.sh"
 
 printf "=== SYSTEM AUDIT ===\n\n"
 
+# DISK USAGE
 printf "[DISK USAGE]\n"
 df -h / | awk 'NR==2 {printf "  Root: %.1f%% used (%s/%s)\n", ($3/$2)*100, $3, $2}'
 if [ -d "$HOME" ]; then
-    home_usage=$(du -sb "$HOME" 2>/dev/null | awk '{print $1}' || echo 0)
+    home_usage=$(get_dir_size "$HOME")
     home_total=$(df "$HOME" 2>/dev/null | awk 'NR==2 {print $2"B"}' | numfmt --from=iec 2>/dev/null || echo "0")
     if [ "$home_total" -gt 0 ]; then
-        printf "  Home: %.1f%% used (%s/%s)\n" $(( (home_usage * 100) / home_total )) "$(format_size "$home_usage")" "$(format_size "$home_total")"
+        home_percent=$(( (home_usage * 100) / home_total ))
+        printf "  Home: %d%% used (%s/%s)\n" "$home_percent" "$(format_size "$home_usage")" "$(format_size "$home_total")"
     fi
 fi
 printf "\n"
 
+# LARGE FILES
 printf "[LARGE FILES]\n"
 largest_files=$(find "$HOME" /var /tmp -type f -size +500M 2>/dev/null | head -5 || echo "")
 if [ -n "$largest_files" ]; then
@@ -30,77 +35,68 @@ else
 fi
 printf "\n"
 
+# CACHE & TEMP - Get all sizes in one pass
 printf "[CACHE & TEMP]\n"
-cache_size=0
-user_cache=0
-tmp_size=0
+cache_size=$([ -d /var/cache ] && du -sb /var/cache 2>/dev/null | awk '{print $1}' || echo 0)
+user_cache=$([ -d ~/.cache ] && du -sb ~/.cache 2>/dev/null | awk '{print $1}' || echo 0)
+tmp_size=$([ -d /tmp ] && du -sb /tmp 2>/dev/null | awk '{print $1}' || echo 0)
 
-if [ -d /var/cache ]; then
-    cache_size=$(du -sb /var/cache 2>/dev/null | awk '{print $1}')
-    [ -z "$cache_size" ] && cache_size=0
-    printf "  /var/cache: %s\n" "$(format_size "$cache_size")"
-fi
-if [ -d ~/.cache ]; then
-    user_cache=$(du -sb ~/.cache 2>/dev/null | awk '{print $1}')
-    [ -z "$user_cache" ] && user_cache=0
-    printf "  ~/.cache: %s\n" "$(format_size "$user_cache")"
-fi
-if [ -d /tmp ]; then
-    tmp_size=$(du -sb /tmp 2>/dev/null | awk '{print $1}')
-    [ -z "$tmp_size" ] && tmp_size=0
-    printf "  /tmp: %s\n" "$(format_size "$tmp_size")"
-fi
+printf "  /var/cache: %s\n" "$(format_size "$cache_size")"
+printf "  ~/.cache: %s\n" "$(format_size "$user_cache")"
+printf "  /tmp: %s\n" "$(format_size "$tmp_size")"
 printf "\n"
 
+# PACKAGES
 printf "[PACKAGES]\n"
-apt_count=$(dpkg -l 2>/dev/null | grep -c "^ii" || echo 0)
-snap_count=$(snap list 2>/dev/null | tail -n +2 | grep -c . || echo 0)
-printf "  APT packages: %d\n" "$apt_count"
-printf "  Snap packages: %d\n" "$snap_count"
+apt_count=$(get_apt_count)
+snap_count=$(get_snap_count)
+printf "  APT packages: %s\n" "$(format_count "$apt_count" "package" "packages")"
+printf "  Snap packages: %s\n" "$(format_count "$snap_count" "package" "packages")"
 printf "\n"
 
+# FIRMWARE
 printf "[FIRMWARE]\n"
-if command -v fwupdmgr >/dev/null 2>&1; then
-    if fwupdmgr get-updates 2>/dev/null | grep -q "firmware updates available"; then
-        fw_count=$(fwupdmgr get-updates 2>/dev/null | grep -c "^•" || true)
-        printf "  Updates available: %d\n" "$fw_count"
+if [ "$ENABLE_FIRMWARE_UPDATES" = true ]; then
+    if command -v fwupdmgr >/dev/null 2>&1; then
+        if fwupdmgr get-updates 2>/dev/null | grep -q "firmware updates available"; then
+            fw_count=$(fwupdmgr get-updates 2>/dev/null | grep -c "^•" || echo 0)
+            printf "  Updates available: %s\n" "$(format_count "$fw_count" "update" "updates")"
+        else
+            printf "  Status: Up to date\n"
+        fi
     else
-        printf "  Status: Up to date\n"
+        printf "  Status: Tool unavailable\n"
     fi
 else
-    printf "  Status: Tool unavailable\n"
+    printf "  Status: Disabled\n"
 fi
 printf "\n"
 
+# SYSTEM HEALTH
 printf "[SYSTEM HEALTH]\n"
-uptime_output=$(uptime -p 2>/dev/null || uptime | sed 's/.*up //' | sed 's/,.*$//')
-printf "  Uptime: %s\n" "$uptime_output"
-
-mem_info=$(free -b 2>/dev/null | awk 'NR==2 {printf "%.1f%%", ($3/$2)*100}' || echo "N/A")
-printf "  Memory: %s used\n" "$mem_info"
-
-updates=$(apt list --upgradable 2>/dev/null | tail -n +2 | wc -l | tr -d ' ')
-[ -z "$updates" ] && updates=0
-printf "  Pending updates: %d\n" "$updates"
-
-orphaned=$(apt autoremove -s 2>/dev/null | grep "^Remov" | wc -l | tr -d ' ')
-[ -z "$orphaned" ] && orphaned=0
-printf "  Orphaned packages: %d\n" "$orphaned"
+printf "  Uptime: %s\n" "$(get_uptime)"
+printf "  Memory: %s%% used\n" "$(get_memory_usage)"
+updates=$(get_apt_upgradable)
+printf "  Pending updates: %s\n" "$(format_count "$updates" "update" "updates")"
+orphaned=$(get_orphaned_packages)
+printf "  Orphaned packages: %s\n" "$(format_count "$orphaned" "package" "packages")"
 printf "\n"
 
+# CLEANLINESS SCORE
 printf "[CLEANLINESS SCORE]\n"
 score=100
-[ "$cache_size" -gt 1073741824 ] && score=$((score - 10)) || true
-[ "$user_cache" -gt 3221225472 ] && score=$((score - 15)) || true
-[ "$tmp_size" -gt 1073741824 ] && score=$((score - 10)) || true
-[ "$orphaned" -gt 0 ] && score=$((score - 5)) || true
-[ "$updates" -gt 5 ] && score=$((score - 10)) || true
 
-if [ "$score" -ge 85 ]; then
+[ "$cache_size" -gt "$CACHE_WARN_THRESHOLD" ] && score=$((score - SCORE_CACHE_PENALTY))
+[ "$user_cache" -gt "$USER_CACHE_WARN_THRESHOLD" ] && score=$((score - SCORE_USER_CACHE_PENALTY))
+[ "$tmp_size" -gt "$TMP_WARN_THRESHOLD" ] && score=$((score - SCORE_TMP_PENALTY))
+[ "$orphaned" -gt 0 ] && score=$((score - SCORE_ORPHANED_PENALTY))
+[ "$updates" -gt "$SCORE_UPDATE_THRESHOLD" ] && score=$((score - SCORE_UPDATES_PENALTY))
+
+if [ "$score" -ge "$SCORE_EXCELLENT" ]; then
     status="EXCELLENT"
-elif [ "$score" -ge 70 ]; then
+elif [ "$score" -ge "$SCORE_GOOD" ]; then
     status="GOOD"
-elif [ "$score" -ge 50 ]; then
+elif [ "$score" -ge "$SCORE_FAIR" ]; then
     status="FAIR"
 else
     status="POOR"
