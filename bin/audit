@@ -41,9 +41,12 @@ printf "\n"
 
 # CACHE & TEMP - Get all sizes in one pass
 printf "[CACHE & TEMP]\n"
-cache_size=$([ -d /var/cache ] && du -sb /var/cache 2>/dev/null | awk '{print $1}' || echo 0)
-user_cache=$([ -d ~/.cache ] && du -sb ~/.cache 2>/dev/null | awk '{print $1}' || echo 0)
-tmp_size=$([ -d /tmp ] && du -sb /tmp 2>/dev/null | awk '{print $1}' || echo 0)
+cache_size=0
+[ -d /var/cache ] && cache_size=$(du -sb /var/cache 2>/dev/null | awk '{print $1}')
+user_cache=0
+[ -d ~/.cache ] && user_cache=$(du -sb ~/.cache 2>/dev/null | awk '{print $1}')
+tmp_size=0
+[ -d /tmp ] && tmp_size=$(du -sb /tmp 2>/dev/null | awk '{print $1}')
 
 printf "  /var/cache: %s\n" "$(format_size "$cache_size")"
 printf "  ~/.cache: %s\n" "$(format_size "$user_cache")"
