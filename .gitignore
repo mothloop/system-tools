@@ -1,0 +1,37 @@
+# Temporary files
+*~
+*.bak
+*.tmp
+*.swp
+.*.sw[op]
+
+# Editor artifacts
+.vscode/
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+.directory
+
+# System
+*.log
+*.pid
+
+# Build/distribution
+dist/
+build/
+*.tar.gz
+*.zip
+
+# Test artifacts
+.coverage
+coverage/
+htmlcov/
+
+# Local config overrides (if added in future)
+local.conf
