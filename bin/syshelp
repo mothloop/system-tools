@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Command descriptions``
-declare -A commands=(
+# Command descriptions
+declare -A COMMANDS=(
     [update]="Full system update (APT, Snap, firmware)"
     [clean]="Remove unnecessary files and packages (APT, Snap)"
     [up]="Check for available updates (APT, Snap, firmware)"
@@ -16,7 +16,7 @@ declare -A commands=(
 print_help() {
     local cmd="$1"
     
-    if [ -z "$cmd" ] || [ ! "${commands[$cmd]+_}" ]; then
+    if [ -z "$cmd" ] || [ ! "${COMMANDS[$cmd]+_}" ]; then
         printf "Error: Unknown command '%s'\n" "$cmd"
         printf "Use 'syshelp list' to see all available commands\n"
         exit 1
@@ -24,19 +24,18 @@ print_help() {
     
     printf "=== COMMAND HELP ===\n\n"
     printf "Command: %s\n" "$cmd"
-    printf "Description: %s\n\n" "${commands[$cmd]}"
+    printf "Description: %s\n\n" "${COMMANDS[$cmd]}"
     printf "Usage: %s\n" "$cmd"
 }
 
 print_list() {
     printf "=== AVAILABLE COMMANDS ===\n\n"
     
-    for cmd in "${!commands[@]}"; do
-        printf "  %-12s  %s\n" "$cmd" "${commands[$cmd]}"
+    for cmd in "${!COMMANDS[@]}"; do
+        printf "  %-12s  %s\n" "$cmd" "${COMMANDS[$cmd]}"
     done | sort
     
-    printf "\n"
-    printf "For more details: syshelp <command_name>\n"
+    printf "\nFor more details: syshelp <command_name>\n"
 }
 
 main() {
