@@ -38,17 +38,17 @@ get_apt_count() {
 
 # Safely get Snap package count
 get_snap_count() {
-    snap list 2>/dev/null | tail -n +2 | grep -c . || echo 0
+    snap list 2>/dev/null | tail -n +2 | wc -l
 }
 
 # Safely get APT upgradable packages
 get_apt_upgradable() {
-    apt list --upgradable 2>/dev/null | tail -n +2 | grep -c . || echo 0
+    apt list --upgradable 2>/dev/null | tail -n +2 | wc -l
 }
 
 # Safely get Snap upgradable packages
 get_snap_upgradable() {
-    snap refresh --list 2>/dev/null | tail -n +2 | grep -c . || echo 0
+    snap refresh --list 2>/dev/null | tail -n +2 | wc -l
 }
 
 # Safely get firmware update count
