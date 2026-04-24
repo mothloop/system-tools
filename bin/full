@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-update
-clean
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Execute update followed by clean
+"$SCRIPT_DIR/bin/update"
+"$SCRIPT_DIR/bin/clean"
