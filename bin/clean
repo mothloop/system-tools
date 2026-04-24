@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! sudo -n true 2>/dev/null; then
-    sudo true
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=/dev/null
+source "$SCRIPT_DIR/lib/common.sh"
+
+ensure_sudo
 
 printf "[APT] Cleaning..."
 sudo apt autoremove -y > /dev/null 2>&1
