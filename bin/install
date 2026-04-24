@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# shellcheck source=/dev/null
-source "$SCRIPT_DIR/lib/config.sh"
-
 CONFIG_FILE="$HOME/.system-tools-repo"
 
 if [ ! -f "$CONFIG_FILE" ]; then
@@ -18,6 +14,9 @@ if [ ! -d "$REPO_DIR" ]; then
     printf "Error: Repository directory %s does not exist.\n" "$REPO_DIR"
     exit 1
 fi
+
+# shellcheck source=/dev/null
+source "$REPO_DIR/lib/config.sh"
 
 cd "$REPO_DIR"
 
